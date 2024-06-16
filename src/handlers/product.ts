@@ -30,6 +30,11 @@ export const getProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const product = await Product.findByPk(id);
+
+    if (!product) {
+      return res.status(404).json({ msg: "Product not found" });
+    }
+
     return res.status(200).json({ data: product });
   } catch (error) {
     console.log(colors.red(error as string));
@@ -40,7 +45,6 @@ export const getProduct = async (req: Request, res: Response) => {
 export const updateProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    console.log(req.body)
     const { name, price, available } = req.body;
     const product = await Product.findByPk(id);
     if (!product) {
@@ -63,7 +67,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
       return res.status(404).json({ msg: "Product not found" });
     }
     await product.destroy();
-    res.status(200).json({ msg: "Product deleted successfully" });
+    res.status(200).json({ data: "Product deleted successfully" });
   } catch (error) {
     console.log(colors.red(error as string));
     return res.status(500).json({ msg: "Something went wrong" });
