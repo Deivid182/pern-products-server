@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { body, param } from "express-validator";
-import { createProduct, getProducts, getProduct, updateProduct, deleteProduct } from "./handlers/product";
+import { createProduct, getProducts, getProduct, updateProduct, deleteProduct, updateAvailability } from "./handlers/product";
 import { validateData } from "./middleware/validate-data";
 
 const router = Router();
@@ -197,7 +197,7 @@ router.get("/:id", param("id").isNumeric().withMessage("Id must be a number"), v
  * 
  */
 
-router.patch("/:id",
+router.put("/:id",
   param("id")
     .isNumeric().withMessage("Id must be a number"),
   body("name").optional().isString().withMessage("Name must be a string").notEmpty().withMessage("Name is required"),
@@ -205,6 +205,40 @@ router.patch("/:id",
   body("available").optional().notEmpty().withMessage("Available is required").isBoolean().withMessage("Available must be a boolean"),
   validateData, updateProduct)
 
+
+/**
+ * @swagger
+ * /api/products/{id}:
+ *  patch:
+ *      summary: Update Product availability
+ *      tags: 
+ *          - Products
+ *      description: Returns the updated availability
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the product to retrieve
+ *          required: true
+ *          schema:
+ *              type: integer
+ *      responses:
+ *          200:
+ *              description: Successful response
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Product'
+ *          400:
+ *              description: Bad Request - Invalid ID
+ *          404:
+ *              description: Product Not Found
+ */
+
+router.patch('/:id', 
+  param('id').isInt().withMessage('ID no válido'),
+  validateData,
+  updateAvailability
+)
 
 /**
  * @swagger

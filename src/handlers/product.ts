@@ -4,8 +4,8 @@ import Product from "../models/Product.model"
 export const createProduct = async (req: Request, res: Response) => {
 
   try {
-    const { name, price, available } = req.body;
-    const product = await Product.create({ name, price, available });
+    const { name, price } = req.body;
+    const product = await Product.create({ name, price });
     return res.status(201).json({ data: product });
     
   } catch (error) {
@@ -57,6 +57,22 @@ export const updateProduct = async (req: Request, res: Response) => {
     console.log(colors.red(error as string));
     return res.status(500).json({ msg: "Something went wrong" });
   }
+}
+
+export const updateAvailability = async (req: Request, res: Response) => {
+  const { id } = req.params
+  const product = await Product.findByPk(id)
+
+  if(!product) {
+      return res.status(404).json({
+          error: 'Producto No Encontrado'
+      })
+  }
+  
+  // Actualizar
+  product.available = !product.dataValues.available
+  await product.save()
+  res.json({data: product})
 }
 
 export const deleteProduct = async (req: Request, res: Response) => {
